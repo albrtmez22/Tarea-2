@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Juego de Adivinar el Número</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 500px; 
+            margin: 20px auto; 
+            text-align: center; 
+        }
+        input, button { 
+            margin: 10px; 
+            padding: 5px; 
+        }
+        #intentos, #historial {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <h1>Adivina el Número</h1>
+    <p>José Alberto Meza Prieto - Tarea 2.</p>
+    <p>Tengo un número secreto entre 1 y 100. Tienes 10 intentos para adivinarlo.</p>
+    <input type="number" id="guess" min="1" max="100">
+    <button onclick="checkGuess()">Adivinar</button>
+    <p id="mensaje"></p>
+    <p>Intentos restantes: <span id="intentos">10</span></p>
+    <p>Números intentados: <span id="historial"></span></p>
+    <button id="reiniciar" onclick="reiniciarJuego()" style="display:none;">Jugar de Nuevo</button>
+
+    <script>
+        let numeroSecreto, intentosRestantes, numerosIntentados;
+
+        function inicializarJuego() {
+            numeroSecreto = Math.floor(Math.random() * 100) + 1;
+            intentosRestantes = 10;
+            numerosIntentados = [];
+            document.getElementById('mensaje').textContent = '';
+            document.getElementById('intentos').textContent = intentosRestantes;
+            document.getElementById('historial').textContent = '';
+            document.getElementById('guess').disabled = false;
+            document.getElementById('reiniciar').style.display = 'none';
+        }
+
+        function checkGuess() {
+            const guess = parseInt(document.getElementById('guess').value);
+            const mensajeElement = document.getElementById('mensaje');
+            const intentosElement = document.getElementById('intentos');
+            const historialElement = document.getElementById('historial');
+
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                mensajeElement.textContent = 'Por favor, ingrese un número válido entre 1 y 100.';
+                return;
+            }
+
+            if (numerosIntentados.includes(guess)) {
+                mensajeElement.textContent = 'Ya has intentado este número. Elige otro.';
+                return;
+            }
+
+            numerosIntentados.push(guess);
+            historialElement.textContent = numerosIntentados.join(', ');
+            intentosRestantes--;
+            intentosElement.textContent = intentosRestantes;
+
+            if (guess === numeroSecreto) {
+                mensajeElement.textContent = '¡Felicidades! ¡Adivinaste el número!';
+                finalizarJuego(true);
+            } else if (intentosRestantes === 0) {
+                mensajeElement.textContent = `¡Agotaste tus intentos! El número era ${numeroSecreto}.`;
+                finalizarJuego(false);
+            } else if (guess < numeroSecreto) {
+                mensajeElement.textContent = 'Demasiado bajo. Intenta un número mayor.';
+            } else {
+                mensajeElement.textContent = 'Demasiado alto. Intenta un número menor.';
+            }
+        }
+
+        function finalizarJuego(victoria) {
+            document.getElementById('guess').disabled = true;
+            document.getElementById('reiniciar').style.display = 'block';
+        }
+
+        function reiniciarJuego() {
+            inicializarJuego();
+        }
+
+        // Inicializar el juego al cargar la página
+        inicializarJuego();
+    </script>
+</body>
+</html>
